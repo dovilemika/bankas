@@ -1,0 +1,68 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_post_show' %}
+
+{% block main %}
+    <h1>{{ account.type }} Account Balance: {{ account.balance }} €</h1>
+    <br/>
+    <button class="btn btn-primary">
+        <a href="{{ path('transfer_new', {id: account.id}) }}">New Transfer</a>
+    </button>
+    <a href="{{ path('accounts_index') }}" class="btn btn-link">
+        <i class="fa fa-list-alt" aria-hidden="true"></i>Back to Accounts
+    </a>
+    <br/>
+    <br/>
+    <h2>Your Transfers:</h2>
+    <br/>
+    <table class="table table-striped table-middle-aligned">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Sender</th>
+            <th scope="col">Receiver</th>
+            <th scope="col">Purpose</th>
+            <th scope="col">Amount</th>
+            <th scope="col">Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for transfer in transfers|sort((a, b) => a.date <=> b.date)|reverse %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ transfer.sender.user.fullName }}, {{ transfer.sender.type }} Account</td>
+                <td>{{ transfer.receiver.user.fullName }}, {{ transfer.receiver.type }} Account</td>
+                <td>{{ transfer.purpose }}</td>
+                <td>
+                    {% if transfer.sender == account %}
+                        -
+                    {% else %}
+                        +
+                    {% endif %}
+                    {{ transfer.amount }} €
+                </td>
+                <td>{{ transfer.date.format('Y-m-d H:i:s') }}</td>
+
+                {% if (date(date()).diff(date(transfer.date)).y == 0)
+                    and (date(date()).diff(date(transfer.date)).m == 0)
+                    and (date(date()).diff(date(transfer.date)).d == 0)
+                    and (date(date()).diff(date(transfer.date)).h == 0)
+                    and (date(date()).diff(date(transfer.date)).i < 2)
+                %}
+                    <td>
+                        <form action="{{ path('transfer_delete', {id: transfer.id}) }}" method="post" id="delete-form">
+                            <input type="hidden" name="token" value="{{ csrf_token('delete') }}" />
+                            <button type="submit" class="btn btn-block btn-danger">
+                                <i class="fa fa-trash" aria-hidden="true"></i>
+                                Cancel
+                            </button>
+                        </form>
+                    </td>
+                {% endif %}
+
+
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'transfer_new' %}
+
+{% block main %}
+    <h1>Create New Transfer</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.receiver) }}
+        {{ form_row(form.purpose) }}
+        {{ form_row(form.amount) }}
+
+        {{ form_widget(form.saveAndCreateNew, {label: 'Create Transfer', attr: {class: 'btn btn-primary'}}) }}
+        <a href="{{ path('accounts_index') }}" class="btn btn-link">
+            <i class="fa fa-list-alt" aria-hidden="true"></i>Back to Accounts
+        </a>
+    {{ form_end(form) }}
+{% endblock %}
